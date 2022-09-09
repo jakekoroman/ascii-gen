@@ -221,17 +221,17 @@ main(int argc, char **argv)
 
     fprintf(f, "\n");
 
-	if (!(f == NULL || f == stdout)) {
-		fclose(f);
-	}
-	
-	if (image_bytes) {
-		stbi_image_free(image_bytes);
+    if (!(f == NULL || f == stdout)) {
+        fclose(f);
+    }
+    
+    if (image_bytes) {
+        stbi_image_free(image_bytes);
     }
 
-	if (resized_bytes && resized) {
-		stbi_image_free(resized_bytes);
-	}
+    if (resized_bytes && resized) {
+        stbi_image_free(resized_bytes);
+    }
 
-	return 0;
+    return 0;
 }
