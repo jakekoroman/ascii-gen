@@ -11,7 +11,7 @@
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "libs/stb_image_resize.h"
 
-#define BUF_CAP 255
+#define BUF_CAP 256
 
 #define internal static
 
@@ -45,7 +45,7 @@ map(int x, int a, int b, int c, int d)
 }
 
 internal void
-print_docs(const char* fname)
+print_docs(const char *fname)
 {
     printf("Usage: %s img [-o file] [-s scale] [-S set] [-hltv]\n", fname); 
     printf("  -h: Shows help\n");
@@ -84,7 +84,7 @@ parse_args(int argc, char **argv, Options *options)
             {
                 options->scale = atoi(optarg);
                 if (options->scale == 0) {
-                    fprintf(stderr, "Invalid scale %s\n", optarg);
+                    fprintf(stderr, "Invalid scale '%s'\n", optarg);
                     exit(69);
                 }
             } break;    
@@ -99,7 +99,6 @@ parse_args(int argc, char **argv, Options *options)
                 options->set_type = SET_TYPE_LONG;
                 options->set_size = SET_SIZE_LONG;
                 strncpy(options->set, SET_LONG, BUF_CAP);
-                break;
             } break;
 
             case 't':  // 't' for tiny I guess? wanted to keep 's' for scale
@@ -107,7 +106,6 @@ parse_args(int argc, char **argv, Options *options)
                 // Redundant because it will default to short but sometimes
                 // it's nice to request it even though its default.
                 options->set_type = SET_TYPE_SHORT;
-                break;
             } break;
 
             case 'S':
@@ -198,9 +196,13 @@ main(int argc, char **argv)
         resized_bytes = image_bytes;
     }
 
-    FILE *f;
+    FILE *f = NULL;
     if (strncmp(options.out_file, "", BUF_CAP)) {
         f = fopen(options.out_file, "w");
+		if (f == NULL) {
+			printf("Couldnt't create output file '%s'\n", options.out_file);
+			exit(69);
+		}
     } else {
         f = stdout;
     }
@@ -210,7 +212,7 @@ main(int argc, char **argv)
          ++i)
     {
         int map_result = map(resized_bytes[i], 0, 255, 0, options.set_size - 1);
-        int idx = (options.set_size -  1) - map_result;
+        int idx = (options.set_size - 1) - map_result;
 
         if (i % nw == 0) {
             fprintf(f, "\n");
@@ -218,7 +220,6 @@ main(int argc, char **argv)
 
         fprintf(f, "%c", options.set[idx]);
     }
-
     fprintf(f, "\n");
 
     if (!(f == NULL || f == stdout)) {
