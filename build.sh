@@ -1,4 +1,4 @@
-CFLAGS='-Wall -std=c11 -pedantic -ggdb'
+CFLAGS='-Wall -pedantic -g'
 LFLAGS='-lm'
 
 set -xe

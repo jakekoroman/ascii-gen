@@ -110,10 +110,12 @@ parse_args(int argc, char **argv, Options *options)
 
             case 'S':
             {
-                int size = strlen(optarg);
-                options->set_size = size > 255 ? BUF_CAP : size;
+                int size = strnlen(optarg, BUF_CAP);
+
+                options->set_size = size;
                 options->set_type = SET_TYPE_CUSTOM;
-                strncpy(options->set, optarg, BUF_CAP);
+                strncpy(options->set, optarg, size);
+				printf("sizeof input: %d\n", size);
             } break;
 
             case '?':
@@ -167,7 +169,7 @@ main(int argc, char **argv)
         printf("Set      : %s\n", options.set);
     }
 
-    // TODO: Maybe bundle this stuff up? including the resized stuff?
+    // TODO(jake): Maybe bundle this stuff up? including the resized stuff?
     int width, height;
     int channels = 1;
     uint8 *image_bytes = stbi_load(options.in_file, &width, &height, NULL, channels);
